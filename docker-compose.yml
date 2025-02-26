@@ -6,6 +6,10 @@ services:
     container_name: user_app
     ports:
       - "5000:5000"
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB_URI: ${DB_USERS_URI}
     depends_on:
       user_db:
         condition: service_healthy
@@ -14,8 +18,15 @@ services:
   user_db:
     image: postgres:16-alpine
     container_name: user_db
+    restart: always
     ports:
       - "5432:5432"     
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB: ${USERS_POSTGRES_DB}
+      POSTGRES_USER: ${USERS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USERS_POSTGRES_PASSWORD}
     volumes:
       - postgres_data_users:/var/lib/postgresql/data
     healthcheck:
@@ -25,9 +36,90 @@ services:
       retries: 5
     networks:
       - user_net
+  product_app:
+    build: ./src/products
+    container_name: product_app
+    ports:
+      - "5001:5000"
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB_URI: ${DB_PRODUCTS_URI}
+    depends_on:
+      product_db:
+        condition: service_healthy
+    networks:
+      - product_net
+  product_db:
+    image: postgres:16-alpine
+    container_name: product_db
+    restart: always
+    ports:
+      - "5433:5432"     
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB: ${PRODUCTS_POSTGRES_DB}
+      POSTGRES_USER: ${PRODUCTS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PRODUCTS_POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_products:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d products_db" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    networks:
+      - product_net
+  order_app:
+    build: ./src/orders
+    container_name: order_app
+    ports:
+      - "5002:5000"
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB_URI: ${DB_ORDERS_URI}
+    depends_on:
+      order_db:
+        condition: service_healthy
+    networks:
+      - order_net
+  order_db:
+    image: postgres:16-alpine
+    container_name: order_db
+    restart: always
+    ports:
+      - "5434:5432"     
+    env_file: 
+      - .env
+    environment:
+      POSTGRES_DB: ${ORDERS_POSTGRES_DB}
+      POSTGRES_USER: ${ORDERS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ORDERS_POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data_orders:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d orders_db" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+    networks:
+      - order_net
+  
+  
+  
 networks:
   user_net:
     driver: bridge
     name: user_net
+  product_net:
+    driver: bridge
+    name: product_net
+  order_net:
+    driver: bridge
+    name: order_net
 volumes:
   postgres_data_users:
+  postgres_data_products:
+  postgres_data_orders:
