@@ -1,6 +1,7 @@
 import uuid
 from app.repositories.order_repository import OrderRepository
 from app.exceptions.http_exceptions import BadRequestError, NotFoundError
+from app.models.order_model import Order
 
 def validate_uuid(id):
     try:
@@ -30,4 +31,13 @@ class OrderService:
 
     @staticmethod
     def create(order_data):
-        return OrderRepository.create(order_data)
+        """ if not order_data.get("name"):
+            raise BadRequestError("El nombre es requerido")
+        if not order_data.get("lastname"):
+            raise BadRequestError("El apellido es requerido")
+        if not order_data.get("password"):
+            raise BadRequestError("La contraseña es requerida")
+        if not order_data.get("email"):
+            raise BadRequestError("El email es requerido") """
+        order = Order(name=order_data["name"], lastname=order_data["lastname"], email=order_data["email"], password=order_data["password"])
+        return OrderRepository.create(order)

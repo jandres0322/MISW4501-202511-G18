@@ -16,6 +16,7 @@ services:
         condition: service_healthy
     networks:
       - user_net
+      - app_net
   user_db:
     image: postgres:16-alpine
     container_name: user_db
@@ -52,6 +53,7 @@ services:
         condition: service_healthy
     networks:
       - product_net
+      - app_net
   product_db:
     image: postgres:16-alpine
     container_name: product_db
@@ -83,11 +85,13 @@ services:
     environment:
       POSTGRES_DB_URI: ${DB_ORDERS_URI}
       USER_SERVICE_URL: ${USER_SERVICE_URL}
+      PRODUCT_SERVICE_URL: ${PRODUCT_SERVICE_URL}
     depends_on:
       order_db:
         condition: service_healthy
     networks:
       - order_net
+      - app_net
   order_db:
     image: postgres:16-alpine
     container_name: order_db
@@ -113,6 +117,9 @@ services:
   
   
 networks:
+  app_net:
+    driver: bridge
+    name: app_net
   user_net:
     driver: bridge
     name: user_net

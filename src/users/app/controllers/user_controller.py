@@ -31,7 +31,6 @@ def get_user(id:str):
         return format_response("success", 200, "Usuario encontrado con éxito", user_schema.dump(user))
 
 @user_bp.route('/', methods=['POST'])
-@jwt_required()
 def create_user():
     try:
         user_data = request.get_json()
@@ -39,7 +38,7 @@ def create_user():
     except BadRequestError as e:
         return format_response("error", e.code, error=e.description)
     else:
-        return format_response("success", 201, "Usuario creado con éxito", user_schema.dump(user)), 201
+        return format_response("success", 201, "Usuario creado con éxito", user_schema.dump(user))
     
 @user_bp.route('/<string:id>', methods=['PATCH'])
 @jwt_required()

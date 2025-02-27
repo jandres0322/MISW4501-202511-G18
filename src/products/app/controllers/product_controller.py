@@ -4,7 +4,7 @@ from app.models.product_model import ProductSchema
 from app.utils.response_util import format_response
 from app.exceptions.http_exceptions import NotFoundError, BadRequestError
 
-product_bp = Blueprint('product', __name__, url_prefix='/product')
+product_bp = Blueprint('products', __name__, url_prefix='/products')
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 
