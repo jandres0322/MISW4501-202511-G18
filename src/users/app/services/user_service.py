@@ -3,6 +3,7 @@ import re
 from app.repositories.user_repository import UserRepository
 from app.exceptions.http_exceptions import BadRequestError, NotFoundError, UnauthorizedError, ForbiddenError
 from app.models.user_model import User
+from app.models.user_model import StatusEnum
 
 def validate_uuid(id):
     try:
@@ -31,6 +32,18 @@ class UserService:
         user = UserRepository.get_by_id(user_id)
         if not user:
             raise NotFoundError("Usuario no encontrado")
+        return user
+    
+    @staticmethod
+    def get_by_id_and_status(user_id):
+        if not validate_uuid(user_id):
+            raise BadRequestError("El formato del id del producto no es correcto")
+            
+        user = UserRepository.get_by_id(user_id)
+        if not user:
+            raise NotFoundError("Usuario no encontrado")
+        if user.status == StatusEnum.BLOCKED:
+            raise ForbiddenError("Tu cuenta ha sido bloqueada. Contacta al soporte del G18 para más información.")
         return user
 
     @staticmethod

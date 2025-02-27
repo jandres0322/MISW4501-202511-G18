@@ -25,13 +25,10 @@ def get_users():
 def get_user(id:str):
     try:
         user = UserService.get_by_id(id)
-    except NotFoundError as e:
-        return format_response("error", e.code, error=e.description)
-    except BadRequestError as e:
+    except (NotFoundError, BadRequestError) as e:
         return format_response("error", e.code, error=e.description)
     else:
         return format_response("success", 200, "Usuario encontrado con éxito", user_schema.dump(user))
-
 
 @user_bp.route('/', methods=['POST'])
 @jwt_required()
@@ -42,7 +39,7 @@ def create_user():
     except BadRequestError as e:
         return format_response("error", e.code, error=e.description)
     else:
-        return format_response("success", 201, "Usuario creado con éxito", user_schema.dump(user))
+        return format_response("success", 201, "Usuario creado con éxito", user_schema.dump(user)), 201
     
 @user_bp.route('/<string:id>', methods=['PATCH'])
 @jwt_required()
@@ -50,9 +47,7 @@ def update_user_status(id:str):
     try:
         user_data = request.get_json()
         user = UserService.update_status(id, user_data)
-    except NotFoundError as e:
-        return format_response("error", e.code, error=e.description)
-    except BadRequestError as e:
+    except (NotFoundError, BadRequestError) as e:
         return format_response("error", e.code, error=e.description)
     else:
         return format_response("success", 200, "Usuario actualizado con éxito", user_schema.dump(user))
