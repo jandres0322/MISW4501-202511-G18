@@ -13,10 +13,18 @@ class UserRepository:
     @staticmethod
     def get_by_email(email):
         return User.query.filter_by(email=email).first()
+    
+    @staticmethod
+    def get_by_username(username):
+        return User.query.filter_by(username=username).first()
 
     @staticmethod
-    def create(user_data):
-        user = User(name=user_data["name"], email=user_data["email"])
+    def create(user: User):
         db.session.add(user)
+        db.session.commit()
+        return user
+    
+    @staticmethod
+    def update(user: User):
         db.session.commit()
         return user
