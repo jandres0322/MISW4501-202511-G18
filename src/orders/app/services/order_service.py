@@ -44,7 +44,7 @@ class OrderService:
         OrderRepository.create(order)
 
         for product_id in order_data.get("products_id_list"):
-            product = get_product_info(product_id)
+            product = get_product_info(str(product_id))
             if not product:
                 raise NotFoundError("Producto no encontrado, se hará un bloqueo preventivo de su cuenta por datos inconsistentes")
             OrderProductRepository.create(OrderProducts(order_id=str(order.id), product_id=product_id, quantity=1))

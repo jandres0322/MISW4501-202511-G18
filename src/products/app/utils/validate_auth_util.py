@@ -19,7 +19,7 @@ def check_auth(token):
 
 def auth_required(func):
     @wraps(func)
-    def decorated_function():
+    def decorated_function(*args, **kwargs):
         try:
             token = request.headers.get("Authorization")
             if not token:
@@ -28,7 +28,7 @@ def auth_required(func):
         except (UnauthorizedError, NotFoundError, ForbiddenError) as e:
             return format_response("error", e.code, error=e.description)
         else:
-            return func()
+            return func(*args, **kwargs)
     return decorated_function
 
 def auth_required_with_id(func):
