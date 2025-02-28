@@ -1,8 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.services.order_service import OrderService
 from app.models.order_model import OrderSchema
 from app.utils.response_util import format_response
-from app.utils.validate_auth_util import auth_required
+from app.utils.validate_auth_util import auth_required, auth_required_with_id
+from app.utils.user_status_util import set_user_status
 from app.exceptions.http_exceptions import NotFoundError, BadRequestError
 
 order_bp = Blueprint('orders', __name__, url_prefix='/orders')
@@ -29,11 +30,13 @@ def get_order(id:str):
 
     
 @order_bp.route('/', methods=['POST'])
-def create_order():
+@auth_required_with_id
+def create_order(user_id:int):
     try:
         order_data = request.get_json()
-        order = OrderService.create(order_data)
-    except BadRequestError as e:
+        order = OrderService.create(user_id, order_data)
+    except (BadRequestError, NotFoundError) as e:
+        set_user_status()
         return format_response("error", e.code, error=e.description)
     else:
         return format_response("success", 201, "Pedido creado con éxito", order_schema.dump(order))

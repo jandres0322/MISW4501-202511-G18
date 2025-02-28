@@ -7,7 +7,7 @@ class Order(db.Model):
     __tablename__ = 'orders'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=db.text("gen_random_uuid()"), unique=True, nullable=False)
-    id_user = db.Column(UUID(as_uuid=True), unique=True, nullable=False)
+    user_id = db.Column(UUID(as_uuid=True), nullable=False)
     #total = db.Column(db.Integer, nullable=False)
     #product_quantity = db.Column(db.Text, nullable=False)
     delivery_date = db.Column(db.DateTime, nullable=False)
@@ -20,7 +20,9 @@ class Order(db.Model):
         return '<Order %r>' % self.username
     
 class OrderSchema(ma.Schema):
+    order_products = ma.Nested("OrderProductsSchema", many=True)
+
     class Meta:
         model = Order
-        fields = ('id', 'id_user', 'delivery_date', 'created_at', 'updated_at', 'order_products')
+        fields = ('id', 'user_id', 'delivery_date', 'created_at', 'updated_at', 'order_products')
     

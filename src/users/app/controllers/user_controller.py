@@ -1,9 +1,9 @@
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.user_service import UserService
 from app.models.user_model import UserSchema
 from app.utils.response_util import format_response
 from app.exceptions.http_exceptions import NotFoundError, BadRequestError
-from flask_jwt_extended import jwt_required
 
 user_bp = Blueprint('user', __name__, url_prefix='/users')
 user_schema = UserSchema()
@@ -40,12 +40,12 @@ def create_user():
     else:
         return format_response("success", 201, "Usuario creado con éxito", user_schema.dump(user))
     
-@user_bp.route('/<string:id>', methods=['PATCH'])
+@user_bp.route('/', methods=['PATCH'])
 @jwt_required()
-def update_user_status(id:str):
+def update_user_status():
     try:
         user_data = request.get_json()
-        user = UserService.update_status(id, user_data)
+        user = UserService.update_status(get_jwt_identity(), user_data)
     except (NotFoundError, BadRequestError) as e:
         return format_response("error", e.code, error=e.description)
     else:

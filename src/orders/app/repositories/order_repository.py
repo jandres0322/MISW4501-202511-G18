@@ -11,8 +11,7 @@ class OrderRepository:
         return Order.query.get(order_id)
 
     @staticmethod
-    def create(order_data):
-        order = Order(name=order_data["name"], email=order_data["email"])
+    def create(order: Order):
         db.session.add(order)
         db.session.commit()
         return order

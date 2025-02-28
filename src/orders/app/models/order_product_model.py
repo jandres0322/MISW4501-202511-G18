@@ -7,17 +7,17 @@ from app.utils.product_info_util import get_product_info
 class OrderProducts(db.Model):
     __tablename__ = 'order_products'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, server_default=db.text("gen_random_uuid()"), unique=True, nullable=False)
     order_id = db.Column(UUID(as_uuid=True), db.ForeignKey('orders.id'), nullable=False)
     product_id = db.Column(UUID(as_uuid=True), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
 class OrderProductsSchema(ma.Schema):
+    product = fields.Method("get_product")
     class Meta:
         model = OrderProducts
-        fields = ('id', 'order_id', 'product_id', 'quantity', 'order', 'product')
-    
-    product = fields.Method("get_product")
+        include_fk = True
+        fields = ('id', 'order_id', 'product_id', 'quantity', 'product')
 
     def get_product(self, obj):
         product = get_product_info(obj.product_id)

@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
 from app.services.product_service import ProductService
 from app.models.product_model import ProductSchema
 from app.utils.response_util import format_response
+from app.utils.validate_auth_util import auth_required
 from app.exceptions.http_exceptions import NotFoundError, BadRequestError
 
 product_bp = Blueprint('products', __name__, url_prefix='/products')
@@ -9,6 +10,7 @@ product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 
 @product_bp.route('/', methods=['GET'])
+@auth_required
 def get_products():
     try:
         products = ProductService.get_all()
@@ -17,6 +19,7 @@ def get_products():
         return format_response("success", 200, message=str(e), data=[])
 
 @product_bp.route('/<string:id>', methods=['GET'])
+@auth_required
 def get_product(id:str):
     try:
         product = ProductService.get_by_id(id)

@@ -29,6 +29,7 @@ services:
       POSTGRES_DB: ${USERS_POSTGRES_DB}
       POSTGRES_USER: ${USERS_POSTGRES_USER}
       POSTGRES_PASSWORD: ${USERS_POSTGRES_PASSWORD}
+      TZ: America/Bogota
     volumes:
       - postgres_data_users:/var/lib/postgresql/data
     healthcheck:
@@ -66,6 +67,7 @@ services:
       POSTGRES_DB: ${PRODUCTS_POSTGRES_DB}
       POSTGRES_USER: ${PRODUCTS_POSTGRES_USER}
       POSTGRES_PASSWORD: ${PRODUCTS_POSTGRES_PASSWORD}
+      TZ: America/Bogota
     volumes:
       - postgres_data_products:/var/lib/postgresql/data
     healthcheck:
@@ -104,6 +106,7 @@ services:
       POSTGRES_DB: ${ORDERS_POSTGRES_DB}
       POSTGRES_USER: ${ORDERS_POSTGRES_USER}
       POSTGRES_PASSWORD: ${ORDERS_POSTGRES_PASSWORD}
+      TZ: America/Bogota
     volumes:
       - postgres_data_orders:/var/lib/postgresql/data
     healthcheck:
