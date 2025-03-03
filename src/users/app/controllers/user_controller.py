@@ -50,3 +50,7 @@ def update_user_status():
         return format_response("error", e.code, error=e.description)
     else:
         return format_response("success", 200, "Usuario actualizado con éxito", user_schema.dump(user))
+
+@user_bp.route('/ping', methods=['GET'])
+def ping():
+    return format_response("success", 200, "pong")

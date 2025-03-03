@@ -26,3 +26,7 @@ def get_product(id:str):
         return format_response("success", 200, "Producto encontrado con éxito", product_schema.dump(product))
     except (NotFoundError, BadRequestError) as e:
         return format_response("error", e.code, error=e.description)
+    
+@product_bp.route('/ping', methods=['GET'])
+def ping():
+    return format_response("success", 200, "pong")

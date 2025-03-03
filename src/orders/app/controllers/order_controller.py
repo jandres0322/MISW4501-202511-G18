@@ -40,3 +40,7 @@ def create_order(user_id:int):
         return format_response("error", e.code, error=e.description)
     else:
         return format_response("success", 201, "Pedido creado con éxito", order_schema.dump(order))
+
+@order_bp.route('/ping', methods=['GET'])
+def ping():
+    return format_response("success", 200, "pong")
